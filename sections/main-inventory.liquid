@@ -1,0 +1,200 @@
+{{ 'section-inventory.css' | asset_url | stylesheet_tag }}
+
+{% assign inventory_items = shop.metaobjects.inventory_data %}
+
+{% style %}
+  /* add padding */
+{% endstyle %}
+<div class="section-container">
+
+  <div class="inventory-container">
+    {% comment %} Top menu content {% endcomment %}
+    <div class="menu-bar__wrapper">
+      <button class="menu-item active">All</button>
+      <button class="menu-item">Active</button>
+      <button class="menu-item">Draft</button>
+      <button class="menu-item">Archived</button>
+      <button class="menu-item add-item tooltip-container">
+        +
+        <span class="tooltip-text">Create New Product</span>
+      </button>
+      {% assign entry = shop.metaobjects.inventory_data['puzzle-rail-car'] %}
+      <pre>
+  {% if entry %}
+    Entry Found: {{ entry.fields | json }}
+  {% else %}
+    No entry found for handle "puzzle-rail-car".
+  {% endif %}
+</pre>
+    </div>
+
+    {% comment %} Table header content {% endcomment %}
+    <div class="table-header__wrapper">
+      <div class="menu-tabs">
+        <div class="header-checkbox">
+          <label for="select-all"></label>
+        </div>
+        <div class="header-item header-title">Product</div>
+        <div class="header-item header-status">Status</div>
+        <div class="header-item header-id">ID</div>
+        <div class="header-item header-category">Category</div>
+        <div class="header-item header-location">Location</div>
+        <div class="header-item header-count">Inventory</div>
+      </div>
+      <div class="menu-actions hidden">
+        <div class="header-item action-count"><span id="selected-count">0</span> selected</div>
+        <div class="menu-action__buttons">
+          <button class="header-item action-button header-delete">Delete</button>
+          <button class="header-item action-button header-draft">Set as draft</button>
+          <button class="header-item action-button header-archive">Archive</button>
+          <button class="header-item action-button header-edit">Edit</button>
+        </div>
+      </div>
+      {% for item in inventory_items %}
+        <p>Product Name: {{ item.fields.product_name }}</p>
+        <p>Product ID: {{ item.fields.product_id }}</p>
+      {% endfor %}
+    </div>
+
+    {% comment %} Product row content {% endcomment %}
+    <div class="product__wrapper">
+      <div class="header-checkbox">
+        <input type="checkbox" id="select-dummy__row">
+        <label for="select-all"></label>
+      </div>
+      {% for items in inventory_items %}
+        <div class="product-item product-title">{{ items.fields.inventory_name }}</div>
+        <div class="product-item product-status">
+          <span>{{ items.fields.inventory_status }}</span>
+        </div>
+        <div class="product-item product-id">{{ items.fields.inventory_id }}</div>
+        <div class="product-item product-category">{{ items.fields.inventory_category }}</div>
+        <div class="product-item product-location">{{ items.fields.inventory_location }}</div>
+        <div class="product-item product-count">{{ items.fields.inventory_count }}</div>
+      {% endfor %}
+    </div>
+    <div class="product__wrapper">
+      <div class="header-checkbox">
+        <input type="checkbox" id="select-dummy__row2">
+        <label for="select-all"></label>
+      </div>
+      <div class="product-item product-title">Stainless Steel Cooling Rack</div>
+      <div class="product-item product-status"><span>Active</span></div>
+      <div class="product-item product-id">002</div>
+      <div class="product-item product-category">Decor</div>
+      <div class="product-item product-location">Bin 6</div>
+      <div class="product-item product-count">5</div>
+    </div>
+
+    <div class="product__wrapper">
+      <div class="header-checkbox">
+        <input type="checkbox" id="select-dummy__row3">
+        <label for="select-all"></label>
+      </div>
+      <div class="product-item product-title">SMM107 Wireless Microphone</div>
+      <div class="product-item product-status"><span>Active</span></div>
+      <div class="product-item product-id">003</div>
+      <div class="product-item product-category">Electronics</div>
+      <div class="product-item product-location">Bin 10</div>
+      <div class="product-item product-count">1</div>
+    </div>
+  </div>
+
+  {% comment %} Add Product Model {% endcomment %}
+  <div id="addProductModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Create new product</h2>
+        <span class="close-button">&times;</span>
+      </div>
+      <div class="form-content">
+        <form id="addProductForm">
+          <label for="form-name">Product Name: </label>
+          <input type="text" id="form-name" placeholder="Enter product name.." required>
+
+          <label for="form-category">Category:</label>
+          <input type="text" id="product-category" placeholder="Enter product category.." required>
+
+          <label for="form-location">Location:</label>
+          <input type="text" id="form-location" placeholder="Enter product location.." required>
+
+          <label for="form-inventory__count">Inventory Count:</label>
+          <input type="number" id="form-inventory__count" placeholder="Enter product count.." required>
+
+          <label for="form-inventory__cost">Inventory Cost:</label>
+          <input type="number" id="form-inventory__cost" placeholder="Enter product cost.." required>
+
+          <label for="form-inventory__value">Inventory Resell Value:</label>
+          <input type="number" id="form-inventory__value" placeholder="Enter product resell value.." required>
+
+          <label for="form-status">Status:</label>
+          <select id="form-status" required>
+            <option value="active">Active</option>
+            <option value="draft">Draft</option>
+            <option value="archived">Archived</option>
+          </select>
+
+          <div class="modal-footer">
+            <button type="button" class="action-button cancel-button">Cancel</button>
+            <button type="submit" class=" action-button create-button">Create view</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.inventory-text.name",
+  "tag": "section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "t:sections.inventory-text.name"
+    }
+  ]
+}
+{% endschema %}
+
+<script>
+  const modal = document.getElementById('addProductModal');
+  const openModalButton = document.querySelector('.add-item');
+  const closeModalButton = document.querySelector('.close-button');
+  const cancelButton = document.querySelector('.cancel-button');
+  const createButton = document.querySelector('.create-button');
+  const checkboxes = document.querySelectorAll('.header-checkbox input[type="checkbox"]');
+  const menuActions = document.querySelector('.menu-actions');
+  const menuTabs = document.querySelector('.menu-tabs');
+  const selectedCount = document.getElementById('selected-count');
+
+  openModalButton.addEventListener('click', () => {
+    modal.classList.remove('hidden');
+  });
+
+  const closeModal = () => modal.classList.add('hidden');
+
+  closeModalButton.addEventListener('click', closeModal);
+  cancelButton.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  const toggleActions = () => {
+    const checkedCheckboxes = Array.from(checkboxes).filter((checkbox) => checkbox.checked);
+    const count = checkedCheckboxes.length;
+
+    if (count > 0) {
+      selectedCount.textContent = count;
+      menuTabs.classList.add('hidden');
+      menuActions.classList.remove('hidden');
+    } else {
+      selectedCount.textContent = 0;
+      menuTabs.classList.remove('hidden');
+      menuActions.classList.add('hidden');
+    }
+  };
+
+  // Event listeners for checkboxes
+  checkboxes.forEach((checkbox) => checkbox.addEventListener('change', toggleActions));
+</script>

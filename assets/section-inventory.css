@@ -1,0 +1,256 @@
+.hidden {
+  display: none;
+}
+
+.action-button {
+  background: #f5f5f5;
+  color: #555;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.action-button:hover {
+  background-color: #f2f2f2;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Wrapper */
+.section-container {
+  margin: 10px 30px;
+  padding: 2px 0;
+}
+.inventory-container {
+  border: 1px solid #f0f0f0;
+  border-radius: 10px;
+  border-bottom: none;
+}
+
+/* Menu */
+.menu-bar__wrapper {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border-bottom: 1px solid rgba(85, 85, 85, 0.1);
+}
+
+.menu-item {
+  background: none;
+  border: none;
+  margin: 0 10px;
+  padding: 8px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #555;
+}
+
+.menu-item.active {
+  background-color: #f2f2f2;
+  color: #555;
+}
+
+.menu-item:hover {
+  background-color: #f2f2f2;
+}
+
+.add-item {
+  font-size: 18px;
+}
+
+/* Tool Tip */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 150px;
+  color: #2c2c2c;
+  background-color: #fff;
+  border: 1px solid rgba(85, 85, 85, 0.2);
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 9999;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 12px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Optional for a better appearance */
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Headers */
+.table-header__wrapper {
+  padding: 8px 0;
+  background-color: #f2f2f2;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(85, 85, 85, 0.1);
+}
+
+.header-item {
+  border-right: 1px solid #f2f2f2;
+  margin: 0 16px;
+}
+
+.menu-tabs {
+  display: grid;
+  grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+.menu-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.menu-actions__buttons {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+input[type="checkbox"] {
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+  margin: 0 16px;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #2c2c2c;
+  color: #000;
+}
+
+.header-delete,
+.header-draft,
+.header-archive,
+.header-edit {
+  margin: 0 5px;
+  font-size: 13px;
+  padding: 4px 8px;
+  background-color: #fff;
+}
+
+.action-count {
+  font-weight: 600;
+  color: #000;
+}
+
+/* Product row */
+.product__wrapper {
+  display: grid;
+  grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr 1fr 1fr;
+  justify-content: space-around;
+  font-size: 13px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.product__wrapper:hover {
+  cursor: pointer;
+  background-color: #f2f2f2;
+}
+
+.product-item {
+  margin: 0 16px;
+  overflow: scroll;
+}
+
+.product-count {
+  border-right: none;
+}
+
+/* Add product Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  background-color: rgba(85, 85, 85, 0.5);
+}
+
+.modal-content {
+  background: #fff;
+  width: 400px;
+  border-radius: 15px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 20px;
+  background-color: #f2f2f2;
+  color: #555;
+  border-radius: 15px 15px 0 0px;
+}
+
+.modal-header h2 {
+  font-size: 15px;
+  margin: 0;
+  color: rgba(85, 85, 85, 1);
+}
+
+.modal-header span {
+  font-size: 25px;
+  color: rgba(85, 85, 85, 0.5);
+}
+
+.close-button {
+  font-size: 20px;
+  cursor: pointer;
+  color: #555;
+}
+
+.close-button:hover {
+  color: #000;
+}
+
+.form-content {
+  padding: 20px;
+  border-radius: 0 0 15px 15px;
+  animation: fadeIn 0.3s ease-out;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+form label,
+#form-status {
+  display: block;
+  margin: 10px 0 5px;
+  font-size: 14px;
+}
+
+form input,
+#form-status {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.modal-footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
