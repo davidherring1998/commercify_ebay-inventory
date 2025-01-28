@@ -1,12 +1,9 @@
 {{ 'section-inventory.css' | asset_url | stylesheet_tag }}
 
-{% assign inventory_items = shop.metaobjects.inventory_data %}
-
 {% style %}
   /* add padding */
 {% endstyle %}
 <div class="section-container">
-
   <div class="inventory-container">
     {% comment %} Top menu content {% endcomment %}
     <div class="menu-bar__wrapper">
@@ -18,14 +15,6 @@
         +
         <span class="tooltip-text">Create New Product</span>
       </button>
-      {% assign entry = shop.metaobjects.inventory_data['puzzle-rail-car'] %}
-      <pre>
-  {% if entry %}
-    Entry Found: {{ entry.fields | json }}
-  {% else %}
-    No entry found for handle "puzzle-rail-car".
-  {% endif %}
-</pre>
     </div>
 
     {% comment %} Table header content {% endcomment %}
@@ -41,6 +30,7 @@
         <div class="header-item header-location">Location</div>
         <div class="header-item header-count">Inventory</div>
       </div>
+      {% comment %} Action menu {% endcomment %}
       <div class="menu-actions hidden">
         <div class="header-item action-count"><span id="selected-count">0</span> selected</div>
         <div class="menu-action__buttons">
@@ -50,58 +40,14 @@
           <button class="header-item action-button header-edit">Edit</button>
         </div>
       </div>
-      {% for item in inventory_items %}
-        <p>Product Name: {{ item.fields.product_name }}</p>
-        <p>Product ID: {{ item.fields.product_id }}</p>
-      {% endfor %}
     </div>
 
     {% comment %} Product row content {% endcomment %}
-    <div class="product__wrapper">
-      <div class="header-checkbox">
-        <input type="checkbox" id="select-dummy__row">
-        <label for="select-all"></label>
-      </div>
-      {% for items in inventory_items %}
-        <div class="product-item product-title">{{ items.fields.inventory_name }}</div>
-        <div class="product-item product-status">
-          <span>{{ items.fields.inventory_status }}</span>
-        </div>
-        <div class="product-item product-id">{{ items.fields.inventory_id }}</div>
-        <div class="product-item product-category">{{ items.fields.inventory_category }}</div>
-        <div class="product-item product-location">{{ items.fields.inventory_location }}</div>
-        <div class="product-item product-count">{{ items.fields.inventory_count }}</div>
-      {% endfor %}
-    </div>
-    <div class="product__wrapper">
-      <div class="header-checkbox">
-        <input type="checkbox" id="select-dummy__row2">
-        <label for="select-all"></label>
-      </div>
-      <div class="product-item product-title">Stainless Steel Cooling Rack</div>
-      <div class="product-item product-status"><span>Active</span></div>
-      <div class="product-item product-id">002</div>
-      <div class="product-item product-category">Decor</div>
-      <div class="product-item product-location">Bin 6</div>
-      <div class="product-item product-count">5</div>
-    </div>
-
-    <div class="product__wrapper">
-      <div class="header-checkbox">
-        <input type="checkbox" id="select-dummy__row3">
-        <label for="select-all"></label>
-      </div>
-      <div class="product-item product-title">SMM107 Wireless Microphone</div>
-      <div class="product-item product-status"><span>Active</span></div>
-      <div class="product-item product-id">003</div>
-      <div class="product-item product-category">Electronics</div>
-      <div class="product-item product-location">Bin 10</div>
-      <div class="product-item product-count">1</div>
-    </div>
+    <div class="product__wrapper"></div>
   </div>
 
   {% comment %} Add Product Model {% endcomment %}
-  <div id="addProductModal" class="modal hidden">
+  <div id="addProductModal" class="modal__wrapper hidden">
     <div class="modal-content">
       <div class="modal-header">
         <h2>Create new product</h2>
@@ -109,23 +55,23 @@
       </div>
       <div class="form-content">
         <form id="addProductForm">
-          <label for="form-name">Product Name: </label>
-          <input type="text" id="form-name" placeholder="Enter product name.." required>
+          <label for="form__name">Product Name: </label>
+          <input type="text" id="form__name" placeholder="Enter product name.." required>
 
-          <label for="form-category">Category:</label>
-          <input type="text" id="product-category" placeholder="Enter product category.." required>
+          <label for="form__category">Category:</label>
+          <input type="text" id="form__category" placeholder="Enter product category.." required>
 
-          <label for="form-location">Location:</label>
-          <input type="text" id="form-location" placeholder="Enter product location.." required>
+          <label for="form__location">Location:</label>
+          <input type="text" id="form__location" placeholder="Enter product location.." required>
 
           <label for="form-inventory__count">Inventory Count:</label>
           <input type="number" id="form-inventory__count" placeholder="Enter product count.." required>
 
           <label for="form-inventory__cost">Inventory Cost:</label>
-          <input type="number" id="form-inventory__cost" placeholder="Enter product cost.." required>
+          <input type="float" id="form-inventory__cost" placeholder="Enter product cost.." required>
 
           <label for="form-inventory__value">Inventory Resell Value:</label>
-          <input type="number" id="form-inventory__value" placeholder="Enter product resell value.." required>
+          <input type="float" id="form-inventory__value" placeholder="Enter product resell value.." required>
 
           <label for="form-status">Status:</label>
           <select id="form-status" required>
@@ -136,7 +82,7 @@
 
           <div class="modal-footer">
             <button type="button" class="action-button cancel-button">Cancel</button>
-            <button type="submit" class=" action-button create-button">Create view</button>
+            <button type="submit" class=" action-button create-button">Add New Item</button>
           </div>
         </form>
       </div>
@@ -158,30 +104,39 @@
 {% endschema %}
 
 <script>
+  // Modal
+  const form = document.getElementById('addProductForm');
   const modal = document.getElementById('addProductModal');
   const openModalButton = document.querySelector('.add-item');
   const closeModalButton = document.querySelector('.close-button');
   const cancelButton = document.querySelector('.cancel-button');
   const createButton = document.querySelector('.create-button');
-  const checkboxes = document.querySelectorAll('.header-checkbox input[type="checkbox"]');
-  const menuActions = document.querySelector('.menu-actions');
-  const menuTabs = document.querySelector('.menu-tabs');
-  const selectedCount = document.getElementById('selected-count');
 
   openModalButton.addEventListener('click', () => {
     modal.classList.remove('hidden');
   });
 
-  const closeModal = () => modal.classList.add('hidden');
+  const closeModal = () => {
+    modal.classList.add('hidden');
+    form.reset();
+  };
 
   closeModalButton.addEventListener('click', closeModal);
+
   cancelButton.addEventListener('click', closeModal);
+
   modal.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
   });
 
+  // Action menu
+  const menuActions = document.querySelector('.menu-actions');
+  const menuTabs = document.querySelector('.menu-tabs');
+  const selectedCount = document.getElementById('selected-count');
+  const checkboxes = document.querySelectorAll('.header-checkbox input[type="checkbox"]');
+
   const toggleActions = () => {
-    const checkedCheckboxes = Array.from(checkboxes).filter((checkbox) => checkbox.checked);
+    const checkedCheckboxes = document.querySelectorAll('.header-checkbox input[type="checkbox"]:checked'); // Dynamically find checked checkboxes
     const count = checkedCheckboxes.length;
 
     if (count > 0) {
@@ -195,6 +150,156 @@
     }
   };
 
-  // Event listeners for checkboxes
-  checkboxes.forEach((checkbox) => checkbox.addEventListener('change', toggleActions));
+  product__wrapper.addEventListener('change', (event) => {
+    if (event.target.matches('.header-checkbox input[type="checkbox"]')) {
+      toggleActions();
+    }
+  });
+
+  const url = 'https://comercify-shopify-server.onrender.com/';
+  const product__wrapper = document.querySelector('.product__wrapper');
+
+  // Return inventory data
+  async function fetchInventoryData() {
+    try {
+      // Retrieve Data
+      const query = `
+        query {
+          returnInventory {
+          id
+          product_name
+          product_status
+          product_category
+          product_location
+          product_count
+       }
+    }
+ `;
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query }),
+      };
+
+      const response = await fetch(url, options);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const { data } = await response.json();
+
+      data.returnInventory.forEach((item) => {
+        const productRow = `
+      <div class="product__row">
+         <div class="header-checkbox">
+            <input type="checkbox">
+            <label for="select-all"></label>
+          </div>
+               <div class="product-item product-title">${item.product_name}</div>
+               <div class="product-item product-status">${item.product_status}</div>
+               <div class="product-item product-id">${item.id.substring(0, 8)}</div>
+               <div class="product-item product-category">${item.product_category}</div>
+               <div class="product-item product-location">${item.product_location}</div>
+               <div class="product-item product-count">${item.product_count}</div>
+        </div>
+        `;
+
+        product__wrapper.innerHTML += productRow;
+      });
+    } catch (error) {
+      console.log('Error fetching inventory', error.message);
+    }
+  }
+
+  async function createInventoryItem(e) {
+    if (e.target === modal) {
+      closeModal;
+    }
+    e.preventDefault();
+
+    const product_name = document.getElementById('form__name');
+    const product_category = document.getElementById('form__category');
+    const product_location = document.getElementById('form__location');
+    const product_count = document.getElementById('form-inventory__count');
+    const product_cost = document.getElementById('form-inventory__cost');
+    const product_resell_value = document.getElementById('form-inventory__value');
+    const product_status = document.getElementById('form-status');
+
+    const mutation = `
+      mutation {
+        createInventory(input: {
+          product_name: "${product_name.value}",
+          product_category: "${product_category.value}",
+          product_location: "${product_location.value}",
+          product_count: ${product_count.value},
+          product_cost: ${product_cost.value},
+          product_resell_value: ${product_resell_value.value},
+          product_status: "${product_status.value}"
+        }) {
+          id
+          product_name
+          product_category
+          product_location
+          product_count
+          product_cost
+          product_resell_value
+          product_status
+        }
+      }
+    `;
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query: mutation }),
+    };
+
+    try {
+      const response = await fetch(url, options);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const { data } = await response.json();
+      const newProduct = data.createInventory;
+      console.log(newProduct);
+
+      console.log('Inventory added:', newProduct);
+
+      if (!product__wrapper) {
+        console.error('Product wrapper not found');
+        return;
+      }
+
+      const newProductRow = `
+    <div class="product__row">
+        <div class="header-checkbox">
+        <input type="checkbox">
+        <label for="select-all"></label>
+    </div>
+        <div class="product-item product-title">${newProduct.product_name}</div>
+       <div class="product-item product-status">${newProduct.product_status}</div>
+       <div class="product-item product-id">#${newProduct.id.substring(0, 5)}</div>
+       <div class="product-item product-category">${newProduct.product_category}</div>
+       <div class="product-item product-location">${newProduct.product_location}</div>
+       <div class="product-item product-count">${newProduct.product_count}</div>
+    </div>
+`;
+      product__wrapper.innerHTML += newProductRow;
+
+      closeModal();
+
+      form.reset();
+    } catch (error) {
+      console.error('Error adding inventory:', error.message);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', fetchInventoryData);
+  form.addEventListener('submit', createInventoryItem);
 </script>
