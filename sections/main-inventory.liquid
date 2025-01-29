@@ -104,6 +104,8 @@
 {% endschema %}
 
 <script>
+  const product__wrapper = document.querySelector('.product__wrapper');
+
   // Modal
   const form = document.getElementById('addProductForm');
   const modal = document.getElementById('addProductModal');
@@ -157,7 +159,6 @@
   });
 
   const url = 'https://comercify-shopify-server.onrender.com/';
-  const product__wrapper = document.querySelector('.product__wrapper');
 
   // Return inventory data
   async function fetchInventoryData() {
@@ -193,9 +194,9 @@
 
       data.returnInventory.forEach((item) => {
         const productRow = `
-      <div class="product__row">
+      <div class="product__row" data-id="${item.id}">
          <div class="header-checkbox">
-            <input type="checkbox">
+            <input type="checkbox" class="select-product">
             <label for="select-all"></label>
           </div>
                <div class="product-item product-title">${item.product_name}</div>
@@ -250,6 +251,7 @@
         }
       }
     `;
+
     const options = {
       method: 'POST',
       headers: {
@@ -279,7 +281,7 @@
       const newProductRow = `
     <div class="product__row">
         <div class="header-checkbox">
-        <input type="checkbox">
+        <input type="checkbox" class="select-product">
         <label for="select-all"></label>
     </div>
         <div class="product-item product-title">${newProduct.product_name}</div>
@@ -300,6 +302,49 @@
     }
   }
 
+  async function deleteInventoryItem() {
+    const selectedCheckboxes = document.querySelectorAll('.select-product:checked'); // Thanks Reddit
+    const selectedIds = Array.from(selectedCheckboxes).map((checkbox) => checkbox.closest('.product__row').dataset.id);
+
+    if (selectedIds.length === 0) {
+      console.log('No items selected for deletion.');
+      return;
+    }
+
+    const mutation = `
+    mutation {
+      ${selectedIds.map((id) => `deleteInventoryItem(id: "${id}")`).join('\n')}
+      }
+    `;
+
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify({ query: mutation }),
+    };
+
+    try {
+      const response = await fetch(url, options);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      selectedCheckboxes.forEach((checkbox) => {
+        checkbox.closest('.product__row').remove();
+      });
+
+      toggleActions();
+    } catch (error) {
+      console.error('Error deleting inventory:', error.message);
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', fetchInventoryData);
   form.addEventListener('submit', createInventoryItem);
+  document.querySelector('.header-delete').addEventListener('click', deleteInventoryItem);
 </script>
