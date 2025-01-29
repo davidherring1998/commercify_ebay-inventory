@@ -302,7 +302,7 @@
     }
   }
 
-  async function deleteInventoryItem() {
+  async function deleteInventoryItems() {
     const selectedCheckboxes = document.querySelectorAll('.select-product:checked'); // Thanks Reddit
     const selectedIds = Array.from(selectedCheckboxes).map((checkbox) => checkbox.closest('.product__row').dataset.id);
 
@@ -313,9 +313,8 @@
 
     const mutation = `
     mutation {
-      ${selectedIds.map((id) => `deleteInventoryItem(id: "${id}")`).join('\n')}
-      }
-    `;
+      deleteInventoryItems(ids: [${selectedIds.map((id) => `"${id}"`).join(', ')}])
+    }`;
 
     const options = {
       method: 'POST',
@@ -346,5 +345,5 @@
 
   document.addEventListener('DOMContentLoaded', fetchInventoryData);
   form.addEventListener('submit', createInventoryItem);
-  document.querySelector('.header-delete').addEventListener('click', deleteInventoryItem);
+  document.querySelector('.header-delete').addEventListener('click', deleteInventoryItems);
 </script>
